@@ -9,12 +9,31 @@ namespace ChatApp
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var environment = builder.Environment;
+
             builder.Services.AddApplication(builder.Configuration);
             builder.Services.AddInfrastructure(builder.Configuration);
 
+            builder.Services.AddControllers();
+
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
             var app = builder.Build();
 
-            app.MapGet("/", () => "Hello World!");
+            if (environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
+            });
 
             app.Run();
         }
