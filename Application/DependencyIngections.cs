@@ -5,7 +5,7 @@ namespace Application
 {
     public static class DependencyIngections
     {
-        public static IServiceCollection AddApliication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
             return services;
         }

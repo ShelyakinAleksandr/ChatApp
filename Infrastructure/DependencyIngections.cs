@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure
@@ -7,6 +8,11 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            var conectionDb = configuration.GetConnectionString("PostgreSql");
+
+            services.AddDbContext<ChatAppDbContext>(builder =>
+                builder.UseNpgsql(conectionDb));
+
             return services;
         }
     }
