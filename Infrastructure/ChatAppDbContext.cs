@@ -1,9 +1,10 @@
-﻿using Domain;
+﻿using Application.DbContext;
+using Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
 {
-    public class ChatAppDbContext : DbContext
+    public class ChatAppDbContext : DbContext, IChatDbContext
     {
         public ChatAppDbContext(DbContextOptions options) : base(options)
         { }

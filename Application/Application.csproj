@@ -7,12 +7,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
+    <PackageReference Include="XAct.Core.PCL" Version="0.0.5014" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="UseCases\Auth\Queries\" />
+    <Folder Include="UseCases\Auth\Commands\" />
+    <Folder Include="UseCases\Chats\Commands\" />
+    <Folder Include="UseCases\Chats\Queries\" />
+    <Folder Include="UseCases\Messages\Queries\" />
+    <Folder Include="UseCases\Messages\Commands\" />
+    <Folder Include="UseCases\Users\Queries\" />
   </ItemGroup>
 
 </Project>

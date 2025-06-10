@@ -12,6 +12,6 @@
         public string PhoneNumber { get; set; }
         public string PasswordHash { get; set; }
         public ICollection<Chat>? Chats { get; set; }
-        public bool IsSoftDelete { get; set; }
+        public bool IsSoftDelete { get; set; } = false;
     }
 }
