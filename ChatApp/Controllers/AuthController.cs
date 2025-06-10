@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Application.UseCases.Users.Commands.AddUserCommand;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp.Controllers
@@ -8,9 +9,10 @@ namespace ChatApp.Controllers
     {
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> Registration()
+        public async Task<ActionResult<Guid>> Registration([FromForm] AddUserCommand command)
         { 
-            return NoContent();
+            var idUser =await Mediator.Send(command);
+            return idUser;
         }
 
         [HttpPost]

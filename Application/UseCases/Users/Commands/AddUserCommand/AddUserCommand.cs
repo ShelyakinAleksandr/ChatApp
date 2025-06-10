@@ -25,9 +25,9 @@ namespace Application.UseCases.Users.Commands.AddUserCommand
 
             public async Task<Guid> Handle(AddUserCommand request, CancellationToken cancellationToken)
             {
-                var passwordHash = ASCIIEncoding.ASCII.GetBytes(request.Password);
-
-                var passwordMD5 = new MD5CryptoServiceProvider().ComputeHash(passwordHash);
+                var inputBytes = ASCIIEncoding.ASCII.GetBytes(request.Password);
+                var passMD5 = new MD5CryptoServiceProvider().ComputeHash(inputBytes);
+                var pass = Convert.ToHexString(passMD5);
 
                 var user = new User
                 {
@@ -37,10 +37,12 @@ namespace Application.UseCases.Users.Commands.AddUserCommand
                     UserName = request.UserName,
                     PhoneNumber = request.PhoneNumber,
                     FirstName = request.FirstName,
-                    PasswordHash = passwordMD5.ToString()
+                    PasswordHash = pass
                 };
 
                 await _chatDbContext.Users.AddAsync(user);
+
+                await _chatDbContext.SaveChangesAsync();
 
                 return user.Id;
             }
