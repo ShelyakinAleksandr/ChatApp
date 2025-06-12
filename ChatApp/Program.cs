@@ -1,7 +1,9 @@
 using System.Text;
 using Application;
+using Application.Options;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -46,18 +48,21 @@ namespace ChatApp
                 });
             });
 
+            var jwtOptions = new JwtOptions();
+            builder.Configuration.GetSection(JwtOptions.SectionName).Bind(jwtOptions);
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = true,
-                        ValidIssuer = "MyAuthServer",
-                        ValidateAudience = true,
-                        ValidAudience = "MyAuthClient",
-                        ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mysupersecret_secretsecretsecretkey!123")),
-                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = jwtOptions.ValidateIssuer,
+                        ValidIssuer = jwtOptions.ValidIssuer,
+                        ValidateAudience = jwtOptions.ValidateLifetime,
+                        ValidAudience = jwtOptions.ValidAudience,
+                        ValidateLifetime = jwtOptions.ValidateLifetime,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
+                        ValidateIssuerSigningKey = jwtOptions.ValidateIssuerSigningKey,
                     };
                 });
             builder.Services.AddAuthorization();

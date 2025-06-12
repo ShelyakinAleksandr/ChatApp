@@ -12,6 +12,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.5" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
     <PackageReference Include="XAct.Core.PCL" Version="0.0.5014" />
   </ItemGroup>
 
@@ -20,8 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UseCases\Auth\Queries\" />
-    <Folder Include="UseCases\Auth\Commands\" />
     <Folder Include="UseCases\Chats\Commands\" />
     <Folder Include="UseCases\Chats\Queries\" />
     <Folder Include="UseCases\Messages\Queries\" />
