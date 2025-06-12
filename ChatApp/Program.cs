@@ -3,9 +3,10 @@ using Application;
 using Application.Options;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using XAct;
 
 namespace ChatApp
 {
@@ -13,9 +14,30 @@ namespace ChatApp
     {
         public static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
+
+            Log.Information("Starting up");
+
             var builder = WebApplication.CreateBuilder(args);
 
-            var environment = builder.Environment;
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            Log.Information("Environment is {env}", environment);
+            if (string.IsNullOrEmpty(environment))
+                throw new ArgumentException("Не удалось получить переменную среды ASPNETCORE_ENVIRONMENT");
+
+            builder.Configuration
+            .AddJsonFile($"appsettings.{environment}.json", optional: true);
+
+            // Логирование через Serilog.
+            builder.Services.AddSerilog((services, logConf) =>
+            {
+                logConf.ReadFrom.Configuration(builder.Configuration);
+                logConf.ReadFrom.Services(services);
+                logConf.Enrich.FromLogContext();
+            });
 
             builder.Services.AddApplication(builder.Configuration);
             builder.Services.AddInfrastructure(builder.Configuration);
@@ -69,7 +91,7 @@ namespace ChatApp
 
             var app = builder.Build();
 
-            if (environment.IsDevelopment())
+            if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
