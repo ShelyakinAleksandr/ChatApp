@@ -6,6 +6,7 @@ using Application.Options;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using XAct.Messages;
@@ -21,13 +22,15 @@ namespace Application.UseCases.Auth.Queries.GetJwt
 
         private class Handler : IRequestHandler<GetJwtQuery, string>
         { 
+            private readonly ILogger<Handler> _logger;
             private readonly IChatDbContext _chatDbContext;
             private readonly JwtOptions _jwtOptions;
 
-            public Handler(IChatDbContext chatDbContext, IOptions<JwtOptions> jwtOptions)
+            public Handler(IChatDbContext chatDbContext, IOptions<JwtOptions> jwtOptions, ILogger<Handler> logger)
             {
                 _chatDbContext = chatDbContext;
                 _jwtOptions = jwtOptions.Value;
+                _logger = logger;
             }
 
             public async Task<string> Handle(GetJwtQuery command, CancellationToken cancellationToken)
@@ -42,7 +45,7 @@ namespace Application.UseCases.Auth.Queries.GetJwt
                 var passHash = Convert.ToHexString(passMD5);
 
                 if (user.PasswordHash != passHash)
-                    throw new Exception("Неверный пароль.");
+                    throw new Exception("Неверное имя пользователя или пароль.");
 
                 var claims = new List<Claim> { new Claim(ClaimTypes.Name, user.UserName) };
 
@@ -57,6 +60,8 @@ namespace Application.UseCases.Auth.Queries.GetJwt
                         expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(_jwtOptions.TimeToLive)),
                         signingCredentials: signingCredential
                         );
+
+                _logger.LogInformation("Пользоваетль вошел {user} в систему", user.UserName);
 
                 return new JwtSecurityTokenHandler().WriteToken(jwt);
             }

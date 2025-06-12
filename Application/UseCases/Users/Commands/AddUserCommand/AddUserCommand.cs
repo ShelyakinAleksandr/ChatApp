@@ -2,6 +2,8 @@
 using Application.DbContext;
 using Domain;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using XSystem.Security.Cryptography;
 
 namespace Application.UseCases.Users.Commands.AddUserCommand
@@ -16,15 +18,24 @@ namespace Application.UseCases.Users.Commands.AddUserCommand
 
         private class Handler : IRequestHandler<AddUserCommand, Guid>
         {
+            private readonly ILogger<Handler> _logger;
             private readonly IChatDbContext _chatDbContext;
 
-            public Handler(IChatDbContext chatDbContext)
+            public Handler(IChatDbContext chatDbContext, ILogger<Handler> logger)
             {
                 _chatDbContext = chatDbContext;
+                _logger = logger;
             }
 
             public async Task<Guid> Handle(AddUserCommand request, CancellationToken cancellationToken)
             {
+                //ToDo: Нужно ли навесить уникальность на поля БД?
+                var oldUser = await _chatDbContext.Users
+                    .FirstOrDefaultAsync(u => u.UserName == request.UserName);
+
+                if (oldUser is not null)
+                    throw new Exception("Пользователь с таким UserName уже есть в системе");
+
                 var inputBytes = ASCIIEncoding.ASCII.GetBytes(request.Password);
                 var passMD5 = new MD5CryptoServiceProvider().ComputeHash(inputBytes);
                 var pass = Convert.ToHexString(passMD5);
@@ -43,6 +54,8 @@ namespace Application.UseCases.Users.Commands.AddUserCommand
                 await _chatDbContext.Users.AddAsync(user);
 
                 await _chatDbContext.SaveChangesAsync();
+
+                _logger.LogInformation("Пользователь {user} зарегестирован", user.UserName);
 
                 return user.Id;
             }
