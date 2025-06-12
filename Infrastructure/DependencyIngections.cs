@@ -12,7 +12,7 @@ namespace Infrastructure
             var conectionDb = configuration.GetConnectionString("PostgreSql");
 
             services.AddDbContext<ChatAppDbContext>(builder =>
-                builder.UseNpgsql(conectionDb));
+                builder.UseNpgsql(conectionDb, o => o.UseNodaTime()));
 
             services.AddScoped<IChatDbContext, ChatAppDbContext>();
 

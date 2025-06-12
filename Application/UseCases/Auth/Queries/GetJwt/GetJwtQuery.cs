@@ -5,12 +5,9 @@ using Application.DbContext;
 using Application.Options;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using XAct.Messages;
-using XAct.Users;
 using XSystem.Security.Cryptography;
 
 namespace Application.UseCases.Auth.Queries.GetJwt
@@ -35,7 +32,7 @@ namespace Application.UseCases.Auth.Queries.GetJwt
 
             public async Task<string> Handle(GetJwtQuery command, CancellationToken cancellationToken)
             {
-                var user = await _chatDbContext.Users.FirstOrDefaultAsync(u => u.UserName == command.UserName);
+                var user = await _chatDbContext.Users.FirstOrDefaultAsync(u => u.UserName == command.UserName, cancellationToken);
 
                 if (user is null)
                     throw new Exception("Пользователь не найден.");
@@ -47,6 +44,7 @@ namespace Application.UseCases.Auth.Queries.GetJwt
                 if (user.PasswordHash != passHash)
                     throw new Exception("Неверное имя пользователя или пароль.");
 
+                //ToDo: Добавить id пользователя
                 var claims = new List<Claim> { new Claim(ClaimTypes.Name, user.UserName) };
 
                 var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));

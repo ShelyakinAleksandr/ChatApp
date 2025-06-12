@@ -11,9 +11,11 @@ namespace Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>();
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Chats);
 
-            modelBuilder.Entity<Chat>();
+            modelBuilder.Entity<Chat>()
+                .HasMany(c => c.Users);
             
             modelBuilder.Entity<Message>();
 

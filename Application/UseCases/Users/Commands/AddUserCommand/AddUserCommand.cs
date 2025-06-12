@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Application.DbContext;
+using Application.Servises;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -20,18 +21,20 @@ namespace Application.UseCases.Users.Commands.AddUserCommand
         {
             private readonly ILogger<Handler> _logger;
             private readonly IChatDbContext _chatDbContext;
+            private readonly DateTimeService _dateTimeService;
 
-            public Handler(IChatDbContext chatDbContext, ILogger<Handler> logger)
+            public Handler(IChatDbContext chatDbContext, ILogger<Handler> logger, DateTimeService dateTimeService)
             {
                 _chatDbContext = chatDbContext;
                 _logger = logger;
+                _dateTimeService = dateTimeService;
             }
 
             public async Task<Guid> Handle(AddUserCommand request, CancellationToken cancellationToken)
             {
                 //ToDo: Нужно ли навесить уникальность на поля БД?
                 var oldUser = await _chatDbContext.Users
-                    .FirstOrDefaultAsync(u => u.UserName == request.UserName);
+                    .FirstOrDefaultAsync(u => u.UserName == request.UserName, cancellationToken);
 
                 if (oldUser is not null)
                     throw new Exception("Пользователь с таким UserName уже есть в системе");
@@ -43,7 +46,7 @@ namespace Application.UseCases.Users.Commands.AddUserCommand
                 var user = new User
                 {
                     Id = Guid.NewGuid(),
-                    CreatedDate = DateTime.UtcNow,
+                    CreatedDate = _dateTimeService.GetCurrentLocalDateTime(),
                     Email = request.Email,
                     UserName = request.UserName,
                     PhoneNumber = request.PhoneNumber,
@@ -51,9 +54,9 @@ namespace Application.UseCases.Users.Commands.AddUserCommand
                     PasswordHash = pass
                 };
 
-                await _chatDbContext.Users.AddAsync(user);
+                await _chatDbContext.Users.AddAsync(user, cancellationToken);
 
-                await _chatDbContext.SaveChangesAsync();
+                await _chatDbContext.SaveChangesAsync(cancellationToken);
 
                 _logger.LogInformation("Пользователь {user} зарегестирован", user.UserName);
 
