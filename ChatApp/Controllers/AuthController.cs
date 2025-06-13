@@ -1,5 +1,5 @@
 ﻿using Application.UseCases.Auth.Queries.GetJwt;
-using Application.UseCases.Users.Commands.AddUserCommand;
+using Application.UseCases.Users.Commands.CreateUserCommand;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +11,7 @@ namespace ChatApp.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Guid>> Registration([FromForm] AddUserCommand command)
+        public async Task<ActionResult<Guid>> Registration([FromForm] CreateUserCommand command)
         { 
             var idUser = await Mediator.Send(command);
             return idUser;

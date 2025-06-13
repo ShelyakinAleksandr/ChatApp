@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
-using Application.UseCases.Chats.Commands.AddChatCommand;
+﻿using Application.UseCases.Chats.Commands.CreateChatCommand;
 using Application.UseCases.Chats.Queries.GetChatsUserQuery;
+using Application.UseCases.Chats.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp.Controllers
@@ -15,7 +15,7 @@ namespace ChatApp.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetChatsUser()
+        public async Task<ActionResult<List<ChatViewModel>>> GetChatsUser()
         {
             var userName = GetUserName();
 
@@ -23,18 +23,18 @@ namespace ChatApp.Controllers
 
             var result = await Mediator.Send(query);
 
-            return Ok(result);
+            return result;
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> AddChat([FromForm] AddChatCommandViewModel addChatCommandViewModel)
+        public async Task<ActionResult<Guid>> CrateChat([FromForm] CreateChatCommandViewModel addChatCommandViewModel)
         {
             var userName = GetUserName();
 
-            var command = new AddChatCommand
+            var command = new CreateChatCommand
             { 
                 Name = addChatCommandViewModel.Name,
                 Description = addChatCommandViewModel.Description,
@@ -43,7 +43,7 @@ namespace ChatApp.Controllers
 
             var result = await Mediator.Send(command);
 
-            return Ok(result);
+            return result;
         }
     }
 }

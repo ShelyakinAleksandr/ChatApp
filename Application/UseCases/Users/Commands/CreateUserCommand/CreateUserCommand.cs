@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using XSystem.Security.Cryptography;
 
-namespace Application.UseCases.Users.Commands.AddUserCommand
+namespace Application.UseCases.Users.Commands.CreateUserCommand
 {
-    public class AddUserCommand : IRequest<Guid>
+    public class CreateUserCommand : IRequest<Guid>
     {
         public string FirstName { get; set; }
         public string Email { get; set; }
@@ -17,7 +17,7 @@ namespace Application.UseCases.Users.Commands.AddUserCommand
         public string PhoneNumber { get; set; }
         public string Password { get; set; }
 
-        private class Handler : IRequestHandler<AddUserCommand, Guid>
+        private class Handler : IRequestHandler<CreateUserCommand, Guid>
         {
             private readonly ILogger<Handler> _logger;
             private readonly IChatDbContext _chatDbContext;
@@ -30,7 +30,7 @@ namespace Application.UseCases.Users.Commands.AddUserCommand
                 _dateTimeService = dateTimeService;
             }
 
-            public async Task<Guid> Handle(AddUserCommand request, CancellationToken cancellationToken)
+            public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
             {
                 //ToDo: Нужно ли навесить уникальность на поля БД?
                 var oldUser = await _chatDbContext.Users

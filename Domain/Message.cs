@@ -9,6 +9,6 @@ namespace Domain
         public User Autor { get; set; }
         public string MessageText { get; set; }
         public Chat Chats {  get; set; }
-        public bool IsSoftDelete { get; set; }
+        public bool IsSoftDelete { get; set; } = false;
     }
 }

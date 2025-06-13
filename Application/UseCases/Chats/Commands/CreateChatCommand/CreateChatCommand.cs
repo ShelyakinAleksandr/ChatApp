@@ -5,15 +5,15 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Application.UseCases.Chats.Commands.AddChatCommand
+namespace Application.UseCases.Chats.Commands.CreateChatCommand
 {
-    public class AddChatCommand : IRequest<Guid>
+    public class CreateChatCommand : IRequest<Guid>
     {
         public string Name { get; set; }
         public string? Description { get; set; }
         public string UserName { get; set; }
 
-        private class Handler : IRequestHandler<AddChatCommand, Guid>
+        private class Handler : IRequestHandler<CreateChatCommand, Guid>
         {
             private readonly ILogger<Handler> _logger;
             private readonly IChatDbContext _chatDbContext;
@@ -26,7 +26,7 @@ namespace Application.UseCases.Chats.Commands.AddChatCommand
                 _dateTimeService = dateTimeService;
             }
 
-            public async Task<Guid> Handle(AddChatCommand command, CancellationToken cancellationToken)
+            public async Task<Guid> Handle(CreateChatCommand command, CancellationToken cancellationToken)
             {
                 var user = await _chatDbContext.Users
                     .FirstOrDefaultAsync(u => u.UserName == command.UserName

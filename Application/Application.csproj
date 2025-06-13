@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <Folder Include="UseCases\Messages\Queries\" />
-    <Folder Include="UseCases\Messages\Commands\" />
     <Folder Include="UseCases\Users\Queries\" />
   </ItemGroup>
 
