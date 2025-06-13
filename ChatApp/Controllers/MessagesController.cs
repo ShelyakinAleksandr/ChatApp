@@ -1,12 +1,21 @@
 ﻿using Application.UseCases.Messages.Commands.AddMesgeInChatCommand;
 using Application.UseCases.Messages.Queries.GetMessagesFromChatQuery;
 using Application.UseCases.Messages.ViewModels;
+using ChatApp.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ChatApp.Controllers
 {
     public class MessagesController : BaseControllers
     {
+        private readonly IHubContext<ChatHub> _hubContext;
+
+        public MessagesController(IHubContext<ChatHub> hubContext)
+        {
+            _hubContext = hubContext;
+        }
+
         /// <summary>
         /// Получить историю сообщений чата.
         /// </summary>
@@ -43,6 +52,9 @@ namespace ChatApp.Controllers
             };
 
             var result = await Mediator.Send(command);
+
+            //ToDo: Необходимо разделить клиентов которым нужно отправлять сообщение. 
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage", command.UserName, command.MessageText);
 
             return result;
         }

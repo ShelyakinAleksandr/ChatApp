@@ -46,7 +46,7 @@ namespace Application.UseCases.Messages.Commands.AddMesgeInChatCommand
                                             &&
                                         c.IsSoftDelete == false, cancellationToken);
 
-                if (user is null)
+                if (chat is null)
                 {
                     _logger.LogError("При создании сообщения не удалось найти чат с Id: {chatId}", command.ChatId);
                     throw new ArgumentNullException(nameof(user));

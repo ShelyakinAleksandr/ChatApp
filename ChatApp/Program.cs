@@ -1,6 +1,7 @@
 using System.Text;
 using Application;
 using Application.Options;
+using ChatApp.Hubs;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -88,6 +89,8 @@ namespace ChatApp
                 });
             builder.Services.AddAuthorization();
 
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -100,6 +103,8 @@ namespace ChatApp
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapHub<ChatHub>("/Chat");
 
             app.UseEndpoints(endpoints =>
             {
