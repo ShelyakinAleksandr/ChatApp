@@ -1,5 +1,4 @@
 ﻿using Application.DbContext;
-using Application.UseCases.Chats.ViewModels;
 using Application.UseCases.Messages.ViewModels;
 using AutoMapper;
 using Domain;
