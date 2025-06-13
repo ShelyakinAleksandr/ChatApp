@@ -33,6 +33,12 @@ namespace Application.UseCases.Chats.Commands.AddChatCommand
                                        &&
                                      u.IsSoftDelete == false, cancellationToken);
 
+                if (user is null)
+                {
+                    _logger.LogError("При создании чата не удалось найти пользователя {user}", command.UserName);
+                    throw new ArgumentNullException(nameof(user));
+                }
+
                 var newChat = new Chat
                 {
                     Id = Guid.NewGuid(),

@@ -1,16 +1,17 @@
 ﻿using Application.DbContext;
-using Domain;
+using Application.UseCases.Users.Commands.GetUserCommand;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Application.UseCases.Users.Commands.GetUserDomainCommand
 {
-    public class GetUserDomainCommand :IRequest<User>
+    //ToDo: Удалить класс или переделать.
+    public class GetUserCommand :IRequest<UserViewModel>
     {
         public string UserName { get; set; }
 
-        private class Handler : IRequestHandler<GetUserDomainCommand, User>
+        private class Handler : IRequestHandler<GetUserCommand, UserViewModel>
         {
             private readonly ILogger<Handler> _logger;
             private readonly IChatDbContext _chatDbContext;
@@ -21,7 +22,7 @@ namespace Application.UseCases.Users.Commands.GetUserDomainCommand
                 _logger = logger;
             }
 
-            public async Task<User> Handle(GetUserDomainCommand command, CancellationToken cancellationToken)
+            public async Task<UserViewModel> Handle(GetUserCommand command, CancellationToken cancellationToken)
             {
                 var user = await _chatDbContext.Users
                     .AsNoTracking()
@@ -29,13 +30,8 @@ namespace Application.UseCases.Users.Commands.GetUserDomainCommand
                                             &&
                                           u.IsSoftDelete == false, cancellationToken);
 
-                if (user is null)
-                {
-                    _logger.LogError("При создании чата не удалось найти пользователя {user}", command.UserName);
-                    throw new ArgumentNullException(nameof(user));
-                }
 
-                return user;
+                return new UserViewModel();
             }
         }
     }

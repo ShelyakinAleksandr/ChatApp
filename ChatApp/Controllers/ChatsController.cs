@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Application.UseCases.Chats.Commands.AddChatCommand;
+using Application.UseCases.Chats.Queries.GetChatsUserQuery;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp.Controllers
@@ -12,13 +13,17 @@ namespace ChatApp.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetChatsUser()
         {
-            ClaimsPrincipal currentUser = User;
+            var userName = GetUserName();
 
-            return NoContent();
+            var query = new GetChatsUserQuery { UserName = userName };
+
+            var result = await Mediator.Send(query);
+
+            return Ok(result);
         }
 
         [HttpPost]
@@ -27,8 +32,7 @@ namespace ChatApp.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> AddChat([FromForm] AddChatCommandViewModel addChatCommandViewModel)
         {
-            var userName = User.Claims.Where(c => c.Type == ClaimTypes.Name)
-                  .Select(c => c.Value).SingleOrDefault();
+            var userName = GetUserName();
 
             var command = new AddChatCommand
             { 
