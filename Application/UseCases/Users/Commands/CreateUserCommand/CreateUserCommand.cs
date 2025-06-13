@@ -33,17 +33,17 @@ namespace Application.UseCases.Users.Commands.CreateUserCommand
             public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
             {
                 //ToDo: Нужно ли навесить уникальность на поля БД?
-                var oldUser = await _chatDbContext.Users
+                var user = await _chatDbContext.Users
                     .FirstOrDefaultAsync(u => u.UserName == request.UserName, cancellationToken);
 
-                if (oldUser is not null)
+                if (user is not null)
                     throw new Exception("Пользователь с таким UserName уже есть в системе");
 
                 var inputBytes = ASCIIEncoding.ASCII.GetBytes(request.Password);
                 var passMD5 = new MD5CryptoServiceProvider().ComputeHash(inputBytes);
                 var pass = Convert.ToHexString(passMD5);
 
-                var user = new User
+                var userNew = new User
                 {
                     Id = Guid.NewGuid(),
                     CreatedDate = _dateTimeService.GetCurrentLocalDateTime(),
@@ -54,13 +54,13 @@ namespace Application.UseCases.Users.Commands.CreateUserCommand
                     PasswordHash = pass
                 };
 
-                await _chatDbContext.Users.AddAsync(user, cancellationToken);
+                await _chatDbContext.Users.AddAsync(userNew, cancellationToken);
 
                 await _chatDbContext.SaveChangesAsync(cancellationToken);
 
-                _logger.LogInformation("Пользователь {user} зарегестирован", user.UserName);
+                _logger.LogInformation("Пользователь {user} зарегестирован", userNew.UserName);
 
-                return user.Id;
+                return userNew.Id;
             }
         }
     }

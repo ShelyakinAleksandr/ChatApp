@@ -66,7 +66,7 @@ namespace Application.UseCases.Messages.Commands.AddMesgeInChatCommand
                     CreatedDate = _dateTimeService.GetCurrentLocalDateTime(),
                     MessageText = command.MessageText,
                     Autor = user,
-                    Chats = chat
+                    Chat = chat
                 };
 
                 await _chatDbContext.Messages.AddAsync(message);
