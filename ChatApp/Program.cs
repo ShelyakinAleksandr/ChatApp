@@ -50,7 +50,7 @@ namespace ChatApp
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Chat API", Version = "v1" });
                 c.AddSecurityDefinition("jwt_auth", new OpenApiSecurityScheme
                 {
                     Description = "JWT authorization header using Bearer scheme. Example: 'Bearer {token}'",
@@ -96,10 +96,10 @@ namespace ChatApp
 
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Chat API"));
             }
 
             app.UseRouting();
