@@ -1,0 +1,21 @@
+version: '3.9'
+services:
+  serverChatApp:
+    build: .
+    ports:
+      - 5050:5050
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+  
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: postgres_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - 5430:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata

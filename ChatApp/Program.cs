@@ -4,6 +4,7 @@ using Application.Options;
 using ChatApp.Hubs;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -30,6 +31,8 @@ namespace ChatApp
 
             builder.Configuration
             .AddJsonFile($"appsettings.{environment}.json", optional: true);
+
+            builder.Services.Configure<KestrelServerOptions>(builder.Configuration.GetSection("Kestrel"));
 
             // Логирование через Serilog.
             builder.Services.AddSerilog((services, logConf) =>
